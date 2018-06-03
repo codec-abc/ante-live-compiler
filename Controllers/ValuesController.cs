@@ -14,7 +14,7 @@ namespace anteCompilerAPI.Controllers
     {
 
          [HttpPost]
-        public ActionResult<string> Post2(string lol)
+        public ActionResult<string> CompileRequest()
         {
             try
             {
@@ -26,7 +26,7 @@ namespace anteCompilerAPI.Controllers
                 Process process = new Process(); 
                 process.StartInfo.FileName = "docker";
 
-                process.StartInfo.Arguments = "run --rm ante bash /home/src/run.sh " + b64;
+                process.StartInfo.Arguments = "run --rm --stop-timeout 15 ante bash /home/src/run.sh " + b64;
 
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -47,7 +47,7 @@ namespace anteCompilerAPI.Controllers
                 process.Start();
                 process.BeginOutputReadLine();
 
-                process.WaitForExit(15000);
+                process.WaitForExit(20000);
 
                 if (content != null)
                 {
