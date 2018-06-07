@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.IO;
 
+using Newtonsoft.Json;
+
 namespace anteCompilerAPI.Controllers
 {
     [ApiController]
@@ -13,14 +15,15 @@ namespace anteCompilerAPI.Controllers
     {
         [HttpPost]
         [Route("play/evaluate.json")]
-        public ActionResult<string> Post()
+        public JsonResult Post()
         {
             try
             {
                 var stream = new StreamReader(this.Request.Body);
                 var body = stream.ReadToEnd();
+                var compilePayload = JsonConvert.DeserializeObject<CompilePayload>(body);
 
-                var b64 = Base64Encode(body);
+                var b64 = Base64Encode(compilePayload.code);
 
                 Process process = new Process(); 
                 process.StartInfo.FileName = "docker";
@@ -50,16 +53,16 @@ namespace anteCompilerAPI.Controllers
 
                 if (content != null)
                 {
-                    return content;
+                    return new JsonResult(new CompilationResult() { conec = content });
                 }
                 else
                 {
-                    return "unexpected error";
+                    return new JsonResult(new CompilationResult() { conec = "unexpected error. Exit code is " + process.ExitCode });
                 }
             }
             catch (Exception e)
             {
-                return "error: " + e.Message;
+                return new JsonResult(new CompilationResult() { conec = "error: " + e.Message });
             }
         }
 
@@ -68,5 +71,17 @@ namespace anteCompilerAPI.Controllers
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
             return System.Convert.ToBase64String(plainTextBytes);
         }
+    }
+
+    public class CompilationResult
+    {
+        public string conec;
+    }
+
+    public class CompilePayload
+    {
+        public string code;
+        public bool color;
+        public bool separate_output;
     }
 }

@@ -538,7 +538,7 @@
         shareButton = document.getElementById("share");
         gistButton = document.getElementById("gist");
         configureEditorButton = document.getElementById("configure-editor");
-        result = document.getElementById("result").firstChild;
+        result = document.getElementById("result").firstElementChild;
         clearResultButton = document.getElementById("clear-result");
         keyboard = document.getElementById("keyboard");
         themes = document.getElementById("themes");
@@ -680,13 +680,13 @@
         delete transposeletters.bindKey;
         editor.commands.addCommand(transposeletters);
 
-        asmButton.onclick = function() {
-            compile("asm", result, session.getValue(), asmButton);
-        };
+        // asmButton.onclick = function() {
+        //     compile("asm", result, session.getValue(), asmButton);
+        // };
 
-        irButton.onclick = function() {
-            compile("llvm-ir", result, session.getValue(), irButton);
-        };
+        // irButton.onclick = function() {
+        //     compile("llvm-ir", result, session.getValue(), irButton);
+        // };
 
         shareButton.onclick = function() {
             share(result, session.getValue(), shareButton);
