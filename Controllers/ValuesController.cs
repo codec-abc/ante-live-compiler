@@ -8,13 +8,12 @@ using System.IO;
 
 namespace anteCompilerAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
-
-         [HttpPost]
-        public ActionResult<string> Post2(string lol)
+        [HttpPost]
+        [Route("play/evaluate.json")]
+        public ActionResult<string> Post()
         {
             try
             {
