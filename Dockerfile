@@ -19,4 +19,3 @@ RUN apt-get update && \
     make && \
     mkdir /home/src && \
     echo "rm -f /home/src/torun.an && echo \$1 | base64 -d >> /home/src/torun.an && /home/ante/ante /home/src/torun.an && /home/src/torun" >> /home/src/run.sh
-    

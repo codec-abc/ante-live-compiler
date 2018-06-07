@@ -42,6 +42,8 @@ namespace anteCompilerAPI
 
             app.UseHttpsRedirection();
             app.UseMvc();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
         }
     }
 }
