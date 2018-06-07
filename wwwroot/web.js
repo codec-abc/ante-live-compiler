@@ -158,9 +158,9 @@
                     pre = document.createElement("pre");
                     pre.appendChild(samp);
                     result.appendChild(pre);
-                    div.textContent = "Program ended.";
+                    //div.textContent = "Program ended.";
                 } else {
-                    div.textContent = "Compilation failed.";
+                    //div.textContent = "Compilation failed.";
                 }
                 if (div) {
                     result.appendChild(div);
@@ -592,7 +592,7 @@
             if (code !== null) {
                 session.setValue(code);
             } else {
-                session.setValue("// Your program goes here...\nfn print(str &u8);\n\nfn main() {\n  print(\"Hello world!\");}\n");
+                session.setValue("// Your program goes here...");
             }
         }
 

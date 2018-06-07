@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 
 using Newtonsoft.Json;
 
@@ -26,29 +27,55 @@ namespace anteCompilerAPI.Controllers
                 var b64 = Base64Encode(compilePayload.code);
 
                 Process process = new Process(); 
-                process.StartInfo.FileName = "docker";
+                bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
-                process.StartInfo.Arguments = "run --rm --stop-timeout 15 ante bash /home/src/run.sh " + b64;
+                if (isWindows)
+                {
+                    process.StartInfo.FileName = "docker";
+                    process.StartInfo.Arguments = "run --rm --stop-timeout 15 ante bash /home/src/run.sh " + b64;
+                }
+                else
+                {
+                    process.StartInfo.FileName = "docker";
+                    process.StartInfo.Arguments = "run --rm --stop-timeout 15 ante bash -c 'bash /home/src/run.sh " + b64 + "'";
+                }
 
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
+
                 string content = null;
 
                 process.OutputDataReceived += (sender, args) => 
                 {
-                    if (content == null)
+                    if (args.Data != null)
                     {
-                        content = args.Data;
-                    }
-                    else
-                    {
-                        content += args.Data;
+                        if (content == null)
+                        {
+                            if (isWindows)
+                            {
+                                content = System.Text.RegularExpressions.Regex.Replace(args.Data, "\\u001b\\[;([0-9]*)m", "");
+                            }
+                            else
+                            {
+                                content = args.Data;
+                            }
+                        }
+                        else
+                        {
+                            if (isWindows)
+                            {
+                                content += "\n" + System.Text.RegularExpressions.Regex.Replace(args.Data, "\\u001b\\[;([0-9]*)m" , "");
+                            }
+                            else
+                            {
+                                content += args.Data;
+                            }
+                        }
                     }
                 };
 
                 process.Start();
                 process.BeginOutputReadLine();
-
                 process.WaitForExit(20000);
 
                 if (content != null)
